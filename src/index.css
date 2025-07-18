@@ -125,6 +125,10 @@
     height: 100%;
     width: 100%;
   }
+
+  button {
+    @apply cursor-pointer;
+  }
 }
 
 @layer utilities {
