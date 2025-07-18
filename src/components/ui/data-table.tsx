@@ -31,6 +31,8 @@ import { useState } from 'react'
 
 const DATA_TABLE_ROW_HEIGHT = 49
 
+const DATA_TABLE_HEADER_ROW_HEIGHT = 40
+
 interface DataTableProps<TData, TValue> {
   data: TData[]
   columns: ColumnDef<TData, TValue>[]
@@ -192,7 +194,8 @@ export function DataTable<TData, TValue>({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className={`rounded-md border relative min-h-[${DATA_TABLE_ROW_HEIGHT * 11}px]`}>
+      <div
+        className={`rounded-md border relative min-h-[${DATA_TABLE_ROW_HEIGHT * 10 + DATA_TABLE_HEADER_ROW_HEIGHT}px]`}>
         {loading && (
           <div className="absolute bg-gray-100/50 flex xy-center top-0 left-0 size-full z-10">
             <LoaderCircle className="animate-spin size-24" />
