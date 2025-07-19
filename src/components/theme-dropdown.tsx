@@ -16,7 +16,7 @@ export function ThemeDropdown() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant="outline">
           {theme.theme === 'dark' ? <MoonIcon /> : theme.theme === 'light' ? <SunIcon /> : <SunMoon />}
         </Button>
