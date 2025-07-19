@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a React + TypeScript product catalog application built with Vite, featuring a modern stack including TailwindCSS, Zustand for state management, and shadcn/ui components. The app has a simple authentication flow and displays products from a mock API with data table functionality.
+This is a React + TypeScript product catalog application built with Vite, featuring a modern stack including TailwindCSS, Zustand for state management, and shadcn/ui components. The app has a simple authentication flow and displays products from an external API with data table functionality, sorting, and pagination.
 
 ## Development Commands
 
@@ -13,6 +13,13 @@ This is a React + TypeScript product catalog application built with Vite, featur
 - `pnpm lint` - Run ESLint to check code quality
 - `pnpm preview` - Preview production build locally
 - `pnpm shadcn` - Add new shadcn/ui components
+
+## Environment Setup
+
+- **Package Manager**: pnpm v10.13.1 (configured in `packageManager` field)
+- **Workspace**: pnpm workspace configured via `pnpm-workspace.yaml`
+- **Environment Variables**: Create `.env` file with `VITE_API_URL` for API endpoint
+- **TypeScript**: Three separate tsconfig files for app, node, and base configuration
 
 ## Architecture Overview
 
@@ -28,9 +35,10 @@ This is a React + TypeScript product catalog application built with Vite, featur
   - `catalog/page.tsx` - Main product catalog with data table
 
 ### Data Layer
-- **Mock API integration** in `src/mock-api/` using DummyJSON API
+- **API integration** in `src/api/` with external product catalog API
 - **Type definitions** in `src/types/` for Product and API response models
 - Products fetched with pagination, sorting, and filtering support
+- API URL configured via `VITE_API_URL` environment variable
 
 ### Component Architecture
 - **shadcn/ui components** in `src/components/ui/` (auto-generated, don't modify directly)
@@ -54,9 +62,10 @@ Use `pnpm shadcn` to add new components. The configuration is in `components.jso
 - Use Zustand stores directly in components without additional providers
 
 ### Data Fetching
-- Mock API calls in `src/mock-api/` abstract DummyJSON integration
-- Products transformed from DummyJSON format to internal Product interface
+- API calls in `src/api/` handle product fetching with sorting and pagination
+- Products use internal Product interface defined in `src/types/Product.ts`
 - Pagination limit set to 10 items (configurable in `src/lib/constants.ts`)
+- API base URL and placeholder image URL configured in `src/lib/constants.ts`
 
 ### Styling Patterns
 - TailwindCSS utility-first approach
