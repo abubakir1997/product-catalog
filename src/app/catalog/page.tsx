@@ -1,10 +1,9 @@
+import { getProducts } from '@/api/getProducts'
+import { queryProducts } from '@/api/queryProducts'
 import { CatalogColumns } from '@/app/catalog/columns'
 import { ThemeDropdown } from '@/components/theme-dropdown'
-import { useTheme } from '@/components/theme-provider'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
-import { getProducts } from '@/mock-api/getProducts'
-import { queryProducts } from '@/mock-api/queryProducts'
 import { useAuthStore } from '@/store/auth'
 import { useCatalogStore } from '@/store/catalog'
 import type { SortDirection } from '@tanstack/react-table'
@@ -17,7 +16,6 @@ export function CatalogPage() {
   const [sortBy, setSortBy] = useState<string>('sku')
   const [sortByDirection, setSortByDirection] = useState<SortDirection>('asc')
 
-  const theme = useTheme()
   const products = useCatalogStore((state) => state.products)
   const setProducts = useCatalogStore((state) => state.setProducts)
   const unauthenticate = useAuthStore((state) => state.unauthenticate)
