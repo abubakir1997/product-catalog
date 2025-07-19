@@ -15,6 +15,7 @@ export function CatalogPage() {
   const [page, setPage] = useState(0)
   const [sortBy, setSortBy] = useState<string>('sku')
   const [sortByDirection, setSortByDirection] = useState<SortDirection>('asc')
+  const [totalProductsCount, setTotalProductsCount] = useState<number | undefined>()
 
   const products = useCatalogStore((state) => state.products)
   const setProducts = useCatalogStore((state) => state.setProducts)
@@ -24,12 +25,17 @@ export function CatalogPage() {
     setFetching(true)
 
     if (query.trim()) {
+      setTotalProductsCount(undefined)
+
       queryProducts(query, page)
         .then(setProducts)
         .finally(() => setFetching(false))
     } else {
       getProducts(sortBy, sortByDirection, page)
-        .then(setProducts)
+        .then((data) => {
+          setProducts(data.products)
+          setTotalProductsCount(data.total)
+        })
         .finally(() => setFetching(false))
     }
   }, [query, sortBy, sortByDirection, page])
@@ -53,6 +59,7 @@ export function CatalogPage() {
         className="table-fixed"
         loading={isFetching}
         columns={CatalogColumns}
+        totalDataCount={totalProductsCount}
         data={products}
         onRefresh={handleFetch}
         query={query}

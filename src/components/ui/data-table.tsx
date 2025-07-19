@@ -37,6 +37,8 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   columns: ColumnDef<TData, TValue>[]
 
+  totalDataCount?: number
+
   loading?: boolean
   defaultSearchColumnId?: string
 
@@ -60,6 +62,7 @@ export function DataTable<TData, TValue>({
 
   loading,
   defaultSearchColumnId,
+  totalDataCount,
 
   query = '',
   onQueryChange,
@@ -115,6 +118,11 @@ export function DataTable<TData, TValue>({
   const canFilterColumns = tableColumns.filter((col) => col.getCanFilter())
   const canHideColumns = tableColumns.filter((column) => column.getCanHide())
   const [searchColumn, setSearchColumn] = useState<string | undefined>(defaultSearchColumnId ?? canFilterColumns[0]?.id)
+
+  const calculatedStartDataCount = page * PAGINATION_LIMIT + 1
+  const calculatedEndDataCount = page * PAGINATION_LIMIT + data.length
+  const isEndReached =
+    totalDataCount !== undefined ? calculatedEndDataCount >= totalDataCount : data.length % PAGINATION_LIMIT !== 0
 
   return (
     <div>
@@ -238,7 +246,8 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex justify-between space-x-2 py-4">
         <div className="text-gray-500">
-          Items {page * PAGINATION_LIMIT + 1} - {page * PAGINATION_LIMIT + data.length}
+          Items {calculatedStartDataCount} - {calculatedEndDataCount}
+          {totalDataCount !== undefined ? ` from ${totalDataCount}` : ''}
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm" onClick={() => table.setPageIndex(0)} disabled={page === 0}>
@@ -255,7 +264,7 @@ export function DataTable<TData, TValue>({
             variant="outline"
             size="sm"
             onClick={() => table.setPageIndex((pageIndex) => pageIndex + 1)}
-            disabled={data.length % PAGINATION_LIMIT !== 0}>
+            disabled={isEndReached}>
             Next
           </Button>
         </div>
