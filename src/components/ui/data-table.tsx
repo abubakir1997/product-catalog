@@ -238,7 +238,7 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex justify-between space-x-2 py-4">
         <div className="text-gray-500">
-          Items {page * PAGINATION_LIMIT + 1} - {(page + 1) * PAGINATION_LIMIT}
+          Items {page * PAGINATION_LIMIT + 1} - {Math.min((page + 1) * PAGINATION_LIMIT, data.length)}
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm" onClick={() => table.setPageIndex(0)} disabled={page === 0}>
