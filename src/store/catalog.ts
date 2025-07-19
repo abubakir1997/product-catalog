@@ -10,6 +10,7 @@ export interface CatalogState {
 
   setProducts: (nextProducts: Product[]) => void
   appendProducts: (addedProducts: Product[]) => void
+  addProduct: (product: Product) => void
 
   removeProduct: (productId: string) => void
 
@@ -28,6 +29,11 @@ export const useCatalogStore = create<CatalogState>()((set) => ({
   appendProducts(addedProducts) {
     set((state) => ({
       products: [...state.products, ...addedProducts.map((product) => ({ ...product, loading: false }))],
+    }))
+  },
+  addProduct(product) {
+    set((state) => ({
+      products: [{ ...product, loading: false }, ...state.products],
     }))
   },
   removeProduct(removeProductId) {

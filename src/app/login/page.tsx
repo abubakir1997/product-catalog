@@ -4,7 +4,7 @@ import { useAuthStore } from '@/store/auth'
 
 export interface LoginPageProps {}
 
-export default function LoginPage(props: LoginPageProps) {
+export default function LoginPage() {
   const authenticate = useAuthStore((state) => state.authenticate)
 
   return (

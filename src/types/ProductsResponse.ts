@@ -5,4 +5,5 @@ export interface ProductsResponse {
   total: number
   skip: number
   limit: number
+  error?: string
 }

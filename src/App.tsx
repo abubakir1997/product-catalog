@@ -10,7 +10,7 @@ export function App() {
   return (
     <ThemeProvider>
       {isAuthenticated ? <CatalogPage /> : <LoginPage />}
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
     </ThemeProvider>
   )
 }

@@ -10,6 +10,11 @@ export async function getProducts(
   const response = await fetch(
     `${API}/products?sortBy=${sortBy}&sortByDirection=${sortByDirection}&limit=${PAGINATION_LIMIT}&page=${page}`
   )
+  const data: ProductsResponse = await response.json()
 
-  return response.json()
+  if (!response.ok) {
+    throw new Error(data.error)
+  }
+
+  return data
 }
