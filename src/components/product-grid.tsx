@@ -52,9 +52,9 @@ export function ProductGrid({
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('flex flex-col h-full', className)}>
       {/* Header with select all */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0 mb-4">
         <div className="flex items-center space-x-2">
           <Checkbox
             checked={allSelected || (someSelected ? 'indeterminate' : false)}
@@ -71,14 +71,14 @@ export function ProductGrid({
       </div>
 
       {/* Product grid */}
-      <div className="relative min-h-[400px]">
+      <div className="relative flex-1 min-h-0">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 z-10">
             <LoaderCircle className="animate-spin size-12 text-gray-400" />
           </div>
         )}
 
-        <ScrollingShadow className="h-[600px]">
+        <ScrollingShadow className="h-full">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-1">
             {products.map((product, index) => {
               const isSelected = rowSelection[index] || false

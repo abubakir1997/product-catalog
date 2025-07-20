@@ -118,8 +118,8 @@ export function CatalogPage() {
   }
 
   return (
-    <div className="flex flex-col space-y-4 p-6 md:p-10">
-      <div className="flex">
+    <div className="flex flex-col h-screen p-6 md:p-10">
+      <div className="flex mb-6">
         <h1 className="scroll-m-20  text-4xl font-extrabold tracking-tight text-balance">Product Catalog</h1>
         <div className="flex-auto flex x-right space-x-2">
           {/* View toggle buttons */}
@@ -169,9 +169,9 @@ export function CatalogPage() {
           }
         />
       ) : (
-        <div className="space-y-4 flex-grow">
+        <div className="flex flex-col flex-1 space-y-4 min-h-0">
           {/* Grid view actions */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-shrink-0">
             <div className="flex items-center space-x-2">
               <Input
                 placeholder="Search products..."
@@ -192,13 +192,16 @@ export function CatalogPage() {
               <Button onClick={() => setIsCreateDialogOpen(true)}>Create Product</Button>
             </div>
           </div>
-          <ProductGrid
-            products={products}
-            loading={isFetching}
-            rowSelection={rowSelection}
-            onRowSelectionChange={setRowSelection}
-            onImageClick={handleImageClick}
-          />
+          <div className="flex-1 min-h-0">
+            <ProductGrid
+              products={products}
+              loading={isFetching}
+              rowSelection={rowSelection}
+              onRowSelectionChange={setRowSelection}
+              onImageClick={handleImageClick}
+              className="h-full"
+            />
+          </div>
         </div>
       )}
       <CreateProductDialog
