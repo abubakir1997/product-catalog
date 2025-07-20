@@ -1,7 +1,7 @@
 import { API } from '@/lib/constants'
 import type { Product } from '@/types/Product'
 
-export async function createProduct(productData: Omit<Product, 'id'>): Promise<Product> {
+export async function createProduct(productData: Omit<Product, '_id'>): Promise<Product> {
   const response = await fetch(`${API}/products`, {
     method: 'POST',
     headers: {

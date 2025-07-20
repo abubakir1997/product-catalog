@@ -4,9 +4,9 @@ import { LoadingButton } from '@/components/loading-button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import type { ProductData } from '@/store/catalog'
+import { type ProductData } from '@/store/catalog'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Edit, Loader2, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Edit, Loader2, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 function ProductActions({ product }: { product: ProductData }) {
@@ -38,7 +38,7 @@ function ProductActions({ product }: { product: ProductData }) {
   )
 }
 
-export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
+export const CatalogColumns = (onImageClick?: (index: number) => void): ColumnDef<ProductData, ProductData>[] => [
   {
     size: 15,
     maxSize: 15,
@@ -81,7 +81,9 @@ export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
     },
     cell(props) {
       return (
-        <Avatar className="rounded-lg m-auto">
+        <Avatar
+          className="rounded-lg m-auto border-2 cursor-pointer shadow-gray-500 hover:shadow-lg transition-shadow"
+          onClick={() => onImageClick?.(props.row.index)}>
           <AvatarImage src={props.row.original.image} />
           <AvatarFallback>{props.row.original.sku.substring(0, 2)}</AvatarFallback>
         </Avatar>
@@ -93,13 +95,16 @@ export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
     accessorKey: 'sku',
     enableHiding: false,
     header: ({ column }) => {
+      const sortDirection = column.getIsSorted()
+
       return (
-        <Button
-          className="rounded-none"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button className="rounded-none" variant="ghost" onClick={() => column.toggleSorting(sortDirection === 'asc')}>
           SKU
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {sortDirection === 'asc' ? (
+            <ArrowUp className="ml-2 size-4" />
+          ) : sortDirection === 'desc' ? (
+            <ArrowDown className="ml-2 size-4" />
+          ) : undefined}
         </Button>
       )
     },
@@ -107,13 +112,16 @@ export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => {
+      const sortDirection = column.getIsSorted()
+
       return (
-        <Button
-          className="rounded-none"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button className="rounded-none" variant="ghost" onClick={() => column.toggleSorting(sortDirection === 'asc')}>
           Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {sortDirection === 'asc' ? (
+            <ArrowUp className="ml-2 size-4" />
+          ) : sortDirection === 'desc' ? (
+            <ArrowDown className="ml-2 size-4" />
+          ) : undefined}
         </Button>
       )
     },
@@ -121,13 +129,16 @@ export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
   {
     id: 'brand',
     header: ({ column }) => {
+      const sortDirection = column.getIsSorted()
+
       return (
-        <Button
-          className="rounded-none"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button className="rounded-none" variant="ghost" onClick={() => column.toggleSorting(sortDirection === 'asc')}>
           Brand
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {sortDirection === 'asc' ? (
+            <ArrowUp className="ml-2 size-4" />
+          ) : sortDirection === 'desc' ? (
+            <ArrowDown className="ml-2 size-4" />
+          ) : undefined}
         </Button>
       )
     },
@@ -142,13 +153,16 @@ export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
   {
     accessorKey: 'description',
     header: ({ column }) => {
+      const sortDirection = column.getIsSorted()
+
       return (
-        <Button
-          className="rounded-none"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button className="rounded-none" variant="ghost" onClick={() => column.toggleSorting(sortDirection === 'asc')}>
           Description
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {sortDirection === 'asc' ? (
+            <ArrowUp className="ml-2 size-4" />
+          ) : sortDirection === 'desc' ? (
+            <ArrowDown className="ml-2 size-4" />
+          ) : undefined}
         </Button>
       )
     },
@@ -156,13 +170,16 @@ export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
   {
     id: 'category',
     header: ({ column }) => {
+      const sortDirection = column.getIsSorted()
+
       return (
-        <Button
-          className="rounded-none"
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        <Button className="rounded-none" variant="ghost" onClick={() => column.toggleSorting(sortDirection === 'asc')}>
           Category
-          <ArrowUpDown className="ml-2 h-4 w-4" />
+          {sortDirection === 'asc' ? (
+            <ArrowUp className="ml-2 size-4" />
+          ) : sortDirection === 'desc' ? (
+            <ArrowDown className="ml-2 size-4" />
+          ) : undefined}
         </Button>
       )
     },

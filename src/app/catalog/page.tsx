@@ -3,6 +3,7 @@ import { getProducts } from '@/api/getProducts'
 import { queryProducts } from '@/api/queryProducts'
 import { CatalogColumns } from '@/app/catalog/columns'
 import { CreateProductDialog } from '@/components/create-product-dialog'
+import { ImageGalleryDialog } from '@/components/image-gallery-dialog'
 import { ThemeDropdown } from '@/components/theme-dropdown'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
@@ -22,9 +23,13 @@ export function CatalogPage() {
   const [sortByDirection, setSortByDirection] = useState<SortDirection>('asc')
   const [totalProductsCount, setTotalProductsCount] = useState<number | undefined>()
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [galleryInitialIndex, setGalleryInitialIndex] = useState(0)
+  const [isLoadingMoreForGallery, setIsLoadingMoreForGallery] = useState(false)
 
   const products = useCatalogStore((state) => state.products)
   const setProducts = useCatalogStore((state) => state.setProducts)
+  const appendProducts = useCatalogStore((state) => state.appendProducts)
   const addProduct = useCatalogStore((state) => state.addProduct)
   const unauthenticate = useAuthStore((state) => state.unauthenticate)
 
@@ -55,7 +60,7 @@ export function CatalogPage() {
     handleFetch()
   }, [handleFetch])
 
-  const handleCreateProduct = async (productData: Omit<Product, 'id'>) => {
+  const handleCreateProduct = async (productData: Omit<Product, '_id'>) => {
     try {
       const newProduct = await createProduct(productData)
       addProduct(newProduct)
@@ -64,6 +69,30 @@ export function CatalogPage() {
       toast.error(error.message)
     }
   }
+
+  const handleImageClick = (productIndex: number) => {
+    setGalleryInitialIndex(productIndex)
+    setIsGalleryOpen(true)
+  }
+
+  const handleLoadNextPage = async () => {
+    if (query.trim() || isLoadingMoreForGallery) return
+
+    setIsLoadingMoreForGallery(true)
+    try {
+      const nextPage = Math.floor(products.length / 10)
+      const data = await getProducts(sortBy, sortByDirection, nextPage)
+      appendProducts(data.products)
+      setTotalProductsCount(data.total)
+    } catch (err) {
+      const error = err as Error
+      toast.error(error.message)
+    } finally {
+      setIsLoadingMoreForGallery(false)
+    }
+  }
+
+  const hasMorePages = totalProductsCount ? products.length < totalProductsCount : false
 
   return (
     <div className="flex flex-col space-y-4 p-6 md:p-10">
@@ -80,7 +109,7 @@ export function CatalogPage() {
       <DataTable
         className="table-fixed"
         loading={isFetching}
-        columns={CatalogColumns}
+        columns={CatalogColumns(handleImageClick)}
         totalDataCount={totalProductsCount}
         data={products}
         onRefresh={handleFetch}
@@ -99,6 +128,15 @@ export function CatalogPage() {
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
         onCreateProduct={handleCreateProduct}
+      />
+      <ImageGalleryDialog
+        open={isGalleryOpen}
+        onOpenChange={setIsGalleryOpen}
+        products={products}
+        initialProductIndex={galleryInitialIndex}
+        onLoadNextPage={handleLoadNextPage}
+        hasMorePages={hasMorePages}
+        isLoadingMore={isLoadingMoreForGallery}
       />
     </div>
   )
