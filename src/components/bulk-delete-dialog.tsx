@@ -1,6 +1,7 @@
 import { bulkDeleteProducts } from '@/api/bulkDeleteProducts'
 import { LoadingButton } from '@/components/loading-button'
 import { ProductCard } from '@/components/product-card'
+import { ScrollingShadow } from '@/components/scrolling-shadow'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -54,16 +55,18 @@ export function BulkDeleteDialog({ products, open, onOpenChange, onComplete }: B
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <div className="max-h-96 overflow-y-auto space-y-3">
-            {products.map((product) => (
-              <ProductCard
-                compact
-                key={product._id}
-                product={product}
-                className="border-destructive/20 bg-destructive/5"
-              />
-            ))}
-          </div>
+          <ScrollingShadow className="h-96" shadowSize={24}>
+            <div className="space-y-3 px-1">
+              {products.map((product) => (
+                <ProductCard
+                  compact
+                  key={product._id}
+                  product={product}
+                  className="border-destructive/20 bg-destructive/5"
+                />
+              ))}
+            </div>
+          </ScrollingShadow>
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

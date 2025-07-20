@@ -18,8 +18,8 @@ export function ProductCard({ product, className, onClick, compact = false }: Pr
       onClick={(event) => onClick?.(event, product)}
       className={cn(
         'group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10',
-        'bg-gradient-to-br from-white via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-blue-950/30',
-        'border-2 shadow-md ring-1 ring-gray-200/50 dark:ring-gray-800/50 hover:ring-blue-300/50 dark:hover:ring-blue-700/50',
+        'bg-white dark:bg-gray-900',
+        'border border-gray-300 dark:border-gray-700 shadow-md hover:shadow-lg',
         onClick && 'cursor-pointer',
         compact && 'pt-3 pb-1',
         className
