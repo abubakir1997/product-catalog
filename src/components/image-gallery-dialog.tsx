@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import type { ProductData } from '@/store/catalog'
-import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useKey } from 'react-use'
 
@@ -61,16 +61,8 @@ export function ImageGalleryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-[60vw] max-w-[90vw] max-h-[90vh] p-0 overflow-hidden">
+      <DialogContent className="min-w-[60vw] max-w-[90vw] max-h-[90vh] p-0 overflow-hidden dark:bg-white">
         <div className="relative flex flex-center bg-black min-h-[60vh]">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute top-4 right-4 z-10 text-white hover:bg-white/20"
-            onClick={() => onOpenChange(false)}>
-            <X className="size-6" />
-          </Button>
-
           <Button
             variant="ghost"
             size="icon"

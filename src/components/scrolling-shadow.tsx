@@ -17,10 +17,10 @@ export function ScrollingShadow({ children, className, shadowSize = 20 }: Scroll
     if (!element) return
 
     const { scrollTop, scrollHeight, clientHeight } = element
-    
+
     // Show top shadow if scrolled down
     setShowTopShadow(scrollTop > 0)
-    
+
     // Show bottom shadow if there's more content below
     setShowBottomShadow(scrollTop + clientHeight < scrollHeight - 1)
   }
@@ -34,7 +34,7 @@ export function ScrollingShadow({ children, className, shadowSize = 20 }: Scroll
 
     // Add scroll listener
     element.addEventListener('scroll', updateShadows, { passive: true })
-    
+
     // Add resize observer to handle content changes
     const resizeObserver = new ResizeObserver(updateShadows)
     resizeObserver.observe(element)
@@ -51,7 +51,7 @@ export function ScrollingShadow({ children, className, shadowSize = 20 }: Scroll
       <div
         className={cn(
           'absolute top-0 left-0 right-0 z-10 pointer-events-none transition-opacity duration-300',
-          'bg-gradient-to-b from-white via-white/80 to-transparent dark:from-gray-900 dark:via-gray-900/80',
+          'bg-gradient-to-b from-white via-white/80 to-transparent dark:from-gray-950 dark:via-gray-950/80',
           showTopShadow ? 'opacity-100' : 'opacity-0'
         )}
         style={{ height: `${shadowSize}px` }}
@@ -65,8 +65,7 @@ export function ScrollingShadow({ children, className, shadowSize = 20 }: Scroll
           height: '100%',
           paddingTop: showTopShadow ? `${shadowSize / 2}px` : '0',
           paddingBottom: showBottomShadow ? `${shadowSize / 2}px` : '0',
-        }}
-      >
+        }}>
         {children}
       </div>
 
@@ -74,7 +73,7 @@ export function ScrollingShadow({ children, className, shadowSize = 20 }: Scroll
       <div
         className={cn(
           'absolute bottom-0 left-0 right-0 z-10 pointer-events-none transition-opacity duration-300',
-          'bg-gradient-to-t from-white via-white/80 to-transparent dark:from-gray-900 dark:via-gray-900/80',
+          'bg-gradient-to-t from-white via-white/80 to-transparent dark:from-gray-950 dark:via-gray-950/80',
           showBottomShadow ? 'opacity-100' : 'opacity-0'
         )}
         style={{ height: `${shadowSize}px` }}
