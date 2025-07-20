@@ -8,7 +8,6 @@ import tseslint from 'typescript-eslint'
 export default tseslint.config([
   globalIgnores(['dist']),
   {
-    plugins: ['unused-imports'],
     files: ['**/*.{ts,tsx}'],
     extends: [
       js.configs.recommended,
@@ -19,19 +18,6 @@ export default tseslint.config([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
-    },
-    rules: {
-      'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off"
-      'unused-imports/no-unused-imports': 'error',
-      'unused-imports/no-unused-vars': [
-        'warn',
-        {
-          vars: 'all',
-          varsIgnorePattern: '^_',
-          args: 'after-used',
-          argsIgnorePattern: '^_',
-        },
-      ],
     },
   },
 ])

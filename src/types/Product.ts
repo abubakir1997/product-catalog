@@ -1,9 +1,9 @@
 export interface Product {
-  id: string
+  _id: string
   name: string
   sku: string
-  description: string
-  category: string
-  image: string
-  brand: string
+  description?: string
+  category?: string
+  image?: string
+  brand?: string
 }

@@ -11,6 +11,7 @@ export interface CatalogState {
   setProducts: (nextProducts: Product[]) => void
   appendProducts: (addedProducts: Product[]) => void
   addProduct: (product: Product) => void
+  updateProduct: (product: Product) => void
 
   removeProduct: (productId: string) => void
 
@@ -36,19 +37,24 @@ export const useCatalogStore = create<CatalogState>()((set) => ({
       products: [{ ...product, loading: false }, ...state.products],
     }))
   },
+  updateProduct(product) {
+    set((state) => ({
+      products: state.products.map((p) => (p._id === product._id ? { ...product, loading: false } : p)),
+    }))
+  },
   removeProduct(removeProductId) {
     set((state) => ({
-      products: state.products.filter((product) => product.id !== removeProductId),
+      products: state.products.filter((product) => product._id !== removeProductId),
     }))
   },
   startProductLoading(productId) {
     set((state) => ({
-      products: state.products.map((product) => (product.id === productId ? { ...product, loading: true } : product)),
+      products: state.products.map((product) => (product._id === productId ? { ...product, loading: true } : product)),
     }))
   },
   stopProductLoading(productId) {
     set((state) => ({
-      products: state.products.map((product) => (product.id === productId ? { ...product, loading: false } : product)),
+      products: state.products.map((product) => (product._id === productId ? { ...product, loading: false } : product)),
     }))
   },
 }))

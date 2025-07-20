@@ -1,5 +1,6 @@
-import { getRandomProduct } from '@/api/getRandomProduct'
+import { updateProduct } from '@/api/updateProduct'
 import { LoadingButton } from '@/components/loading-button'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -11,68 +12,71 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useCatalogStore } from '@/store/catalog'
+import type { Product } from '@/types/Product'
 import { createProductSchema, type CreateProductFormData } from '@/validations/create-product'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 
-interface CreateProductDialogProps {
+interface EditProductDialogProps {
+  product: Product
   open: boolean
   onOpenChange: (open: boolean) => void
-  onCreateProduct: (product: CreateProductFormData) => Promise<void>
 }
 
-export function CreateProductDialog({ open, onOpenChange, onCreateProduct }: CreateProductDialogProps) {
+export function EditProductDialog({ product, open, onOpenChange }: EditProductDialogProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const updateProductInStore = useCatalogStore((state) => state.updateProduct)
+  const startProductLoading = useCatalogStore((state) => state.startProductLoading)
+  const stopProductLoading = useCatalogStore((state) => state.stopProductLoading)
+
   const form = useForm<CreateProductFormData>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
-      name: '',
-      sku: '',
-      description: '',
-      category: '',
-      brand: '',
-      image: '',
+      name: product.name,
+      sku: product.sku,
+      description: product.description || '',
+      category: product.category || '',
+      brand: product.brand || '',
+      image: product.image || '',
     },
   })
 
-  const onSubmit = async (data: CreateProductFormData) => {
+  const handleSubmit = async (data: CreateProductFormData) => {
+    setIsSubmitting(true)
+    startProductLoading(product._id)
+
     try {
-      await onCreateProduct(data)
-      form.reset()
+      const updatedProduct = await updateProduct(product._id, data)
+      updateProductInStore(updatedProduct)
       onOpenChange(false)
-    } catch (err) {
-      const error = err as Error
-      toast.error(error.message)
+      form.reset()
+    } catch (error) {
+      console.error('Failed to update product:', error)
+    } finally {
+      setIsSubmitting(false)
+      stopProductLoading(product._id)
     }
   }
-
-  const handleRandomProduct = async () => {
-    const product = await getRandomProduct()
-    form.reset(product)
-  }
-
-  useEffect(() => {
-    form.reset()
-  }, [form, open])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create New Product</DialogTitle>
-          <DialogDescription>Add a new product to the catalog. Fields marked with * are required.</DialogDescription>
+          <DialogTitle>Edit Product</DialogTitle>
+          <DialogDescription>Make changes to the product information.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name *</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Product name" {...field} />
+                    <Input {...field} placeholder="Enter product name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -83,35 +87,9 @@ export function CreateProductDialog({ open, onOpenChange, onCreateProduct }: Cre
               name="sku"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>SKU *</FormLabel>
+                  <FormLabel>SKU</FormLabel>
                   <FormControl>
-                    <Input placeholder="SKU-001" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Product description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Electronics" {...field} />
+                    <Input {...field} placeholder="Enter SKU" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,7 +102,33 @@ export function CreateProductDialog({ open, onOpenChange, onCreateProduct }: Cre
                 <FormItem>
                   <FormLabel>Brand</FormLabel>
                   <FormControl>
-                    <Input placeholder="Brand name" {...field} />
+                    <Input {...field} placeholder="Enter brand" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="Enter category" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} placeholder="Enter description" rows={3} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,23 +141,18 @@ export function CreateProductDialog({ open, onOpenChange, onCreateProduct }: Cre
                 <FormItem>
                   <FormLabel>Image URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://..." type="url" {...field} />
+                    <Input {...field} placeholder="Enter image URL" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <LoadingButton
-                className="mr-auto"
-                type="button"
-                variant="outline"
-                disabled={form.formState.isSubmitting}
-                onAsyncClick={handleRandomProduct}>
-                Random
-              </LoadingButton>
-              <LoadingButton type="submit" loading={form.formState.isSubmitting}>
-                Create Product
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <LoadingButton type="submit" loading={isSubmitting}>
+                Save Changes
               </LoadingButton>
             </DialogFooter>
           </form>
