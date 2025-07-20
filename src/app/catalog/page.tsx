@@ -4,6 +4,7 @@ import { queryProducts } from '@/api/queryProducts'
 import { CatalogColumns } from '@/app/catalog/columns'
 import { BulkDeleteDialog } from '@/components/bulk-delete-dialog'
 import { CreateProductDialog } from '@/components/create-product-dialog'
+import { GridPagination } from '@/components/grid-pagination'
 import { ImageGalleryDialog } from '@/components/image-gallery-dialog'
 import { ProductGrid } from '@/components/product-grid'
 import { ThemeDropdown } from '@/components/theme-dropdown'
@@ -117,6 +118,11 @@ export function CatalogPage() {
     toast.success(`Successfully deleted ${selectedProducts.length} product${selectedProducts.length > 1 ? 's' : ''}`)
   }
 
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+    setRowSelection({}) // Clear selection when changing pages
+  }
+
   return (
     <div className="flex flex-col h-screen p-6 md:p-10">
       <div className="flex mb-6">
@@ -192,14 +198,23 @@ export function CatalogPage() {
               <Button onClick={() => setIsCreateDialogOpen(true)}>Create Product</Button>
             </div>
           </div>
-          <div className="flex-1 min-h-0">
-            <ProductGrid
-              products={products}
+          <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-1 min-h-0">
+              <ProductGrid
+                products={products}
+                loading={isFetching}
+                rowSelection={rowSelection}
+                onRowSelectionChange={setRowSelection}
+                onImageClick={handleImageClick}
+                className="h-full"
+              />
+            </div>
+            <GridPagination
+              page={page}
+              totalCount={totalProductsCount}
+              itemCount={products.length}
+              onPageChange={handlePageChange}
               loading={isFetching}
-              rowSelection={rowSelection}
-              onRowSelectionChange={setRowSelection}
-              onImageClick={handleImageClick}
-              className="h-full"
             />
           </div>
         </div>

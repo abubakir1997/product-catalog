@@ -65,9 +65,6 @@ export function ProductGrid({
             {selectedCount > 0 ? `${selectedCount} selected` : 'Select all'}
           </span>
         </div>
-        <span className="text-sm text-gray-500">
-          {products.length} product{products.length !== 1 ? 's' : ''}
-        </span>
       </div>
 
       {/* Product grid */}
