@@ -5,14 +5,18 @@ import { CatalogColumns } from '@/app/catalog/columns'
 import { BulkDeleteDialog } from '@/components/bulk-delete-dialog'
 import { CreateProductDialog } from '@/components/create-product-dialog'
 import { ImageGalleryDialog } from '@/components/image-gallery-dialog'
+import { ProductGrid } from '@/components/product-grid'
 import { ThemeDropdown } from '@/components/theme-dropdown'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/data-table'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth'
 import { useCatalogStore } from '@/store/catalog'
 import type { Product } from '@/types/Product'
 import type { ProductsResponse } from '@/types/ProductsResponse'
 import type { RowSelectionState, SortDirection } from '@tanstack/react-table'
+import { Grid3X3, RefreshCcwIcon, Table2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -29,6 +33,7 @@ export function CatalogPage() {
   const [isLoadingMoreForGallery, setIsLoadingMoreForGallery] = useState(false)
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false)
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table')
 
   const products = useCatalogStore((state) => state.products)
   const setProducts = useCatalogStore((state) => state.setProducts)
@@ -117,42 +122,85 @@ export function CatalogPage() {
       <div className="flex">
         <h1 className="scroll-m-20  text-4xl font-extrabold tracking-tight text-balance">Product Catalog</h1>
         <div className="flex-auto flex x-right space-x-2">
+          {/* View toggle buttons */}
+          <div className="flex y-center border rounded-lg bg-gray-50 dark:bg-gray-800 px-1">
+            <Button variant={viewMode === 'table' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('table')}>
+              <Table2 className="size-4" />
+            </Button>
+            <Button variant={viewMode === 'grid' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('grid')}>
+              <Grid3X3 className="size-4" />
+            </Button>
+          </div>
           <ThemeDropdown />
           <Button variant="outline" onClick={unauthenticate}>
             Log Out
           </Button>
         </div>
       </div>
-      <DataTable
-        className="table-fixed"
-        loading={isFetching}
-        columns={CatalogColumns(handleImageClick)}
-        totalDataCount={totalProductsCount}
-        data={products}
-        onRefresh={handleFetch}
-        query={query}
-        onQueryChange={setQuery}
-        page={page}
-        onPageChange={setPage}
-        rowSelection={rowSelection}
-        onRowSelectionChange={setRowSelection}
-        sortBy={sortBy}
-        sortByDirection={sortByDirection}
-        onSortChange={(sortBy, sortByDirection) => {
-          setSortBy(sortBy)
-          setSortByDirection(sortByDirection)
-        }}
-        actions={
-          <>
-            {selectedProducts.length > 0 && (
-              <Button variant="destructive" onClick={handleBulkDelete}>
-                Delete {selectedProducts.length} Selected
+      {viewMode === 'table' ? (
+        <DataTable
+          className="table-fixed"
+          loading={isFetching}
+          columns={CatalogColumns(handleImageClick)}
+          totalDataCount={totalProductsCount}
+          data={products}
+          onRefresh={handleFetch}
+          query={query}
+          onQueryChange={setQuery}
+          page={page}
+          onPageChange={setPage}
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          sortBy={sortBy}
+          sortByDirection={sortByDirection}
+          onSortChange={(sortBy, sortByDirection) => {
+            setSortBy(sortBy)
+            setSortByDirection(sortByDirection)
+          }}
+          actions={
+            <>
+              {selectedProducts.length > 0 && (
+                <Button variant="destructive" onClick={handleBulkDelete}>
+                  Delete {selectedProducts.length} Selected
+                </Button>
+              )}
+              <Button onClick={() => setIsCreateDialogOpen(true)}>Create Product</Button>
+            </>
+          }
+        />
+      ) : (
+        <div className="space-y-4 flex-grow">
+          {/* Grid view actions */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Input
+                placeholder="Search products..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="max-w-sm"
+              />
+              <Button variant="outline" onClick={handleFetch}>
+                <RefreshCcwIcon className={cn(isFetching && 'animate-spin')} />
               </Button>
-            )}
-            <Button onClick={() => setIsCreateDialogOpen(true)}>Create Product</Button>
-          </>
-        }
-      />
+            </div>
+            <div className="flex items-center space-x-2">
+              {selectedProducts.length > 0 && (
+                <Button variant="destructive" onClick={handleBulkDelete}>
+                  Delete {selectedProducts.length} Selected
+                </Button>
+              )}
+              <Button onClick={() => setIsCreateDialogOpen(true)}>Create Product</Button>
+            </div>
+          </div>
+          <ProductGrid
+            products={products}
+            loading={isFetching}
+            rowSelection={rowSelection}
+            onRowSelectionChange={setRowSelection}
+            onImageClick={handleImageClick}
+          />
+        </div>
+      )}
       <CreateProductDialog
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}

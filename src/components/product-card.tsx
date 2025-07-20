@@ -8,10 +8,19 @@ interface ProductCardProps {
   product: Product
   className?: string
   compact?: boolean
+  onImageClick?: (event: React.MouseEvent<HTMLDivElement>) => void
   onClick?: (event: React.MouseEvent<HTMLDivElement>, product: Product) => void
 }
 
-export function ProductCard({ product, className, onClick, compact = false }: ProductCardProps) {
+export function ProductCard({ product, className, onImageClick, onClick, compact = false }: ProductCardProps) {
+  const handleAvatarClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (onImageClick) {
+      event.preventDefault()
+      event.stopPropagation()
+      onImageClick(event)
+    }
+  }
+
   return (
     <Card
       onClick={(event) => onClick?.(event, product)}
@@ -30,9 +39,11 @@ export function ProductCard({ product, className, onClick, compact = false }: Pr
         <div className="flex items-start gap-3">
           <div className="relative">
             <Avatar
+              onClick={handleAvatarClick}
               className={cn(
                 'rounded-xl border-2 border-white dark:border-gray-800 shadow-lg ring-2 ring-gray-100 dark:ring-gray-800 transition-all duration-300',
                 'group-hover:ring-blue-200 dark:group-hover:ring-blue-800 group-hover:shadow-blue-500/20',
+                onImageClick && 'cursor-pointer',
                 compact ? 'size-12' : 'size-16'
               )}>
               <AvatarImage src={product.image} alt={product.name} className="object-cover" />
