@@ -56,10 +56,10 @@ export function BulkDeleteDialog({ products, open, onOpenChange, onComplete }: B
         <div className="py-4">
           <div className="max-h-96 overflow-y-auto space-y-3">
             {products.map((product) => (
-              <ProductCard 
-                key={product._id} 
-                product={product} 
-                compact 
+              <ProductCard
+                compact
+                key={product._id}
+                product={product}
                 className="border-destructive/20 bg-destructive/5"
               />
             ))}

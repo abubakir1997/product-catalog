@@ -3,26 +3,31 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { ProductData } from '@/store/catalog'
+import type { Product } from '@/types/Product'
 
 interface ProductCardProps {
   product: ProductData
   className?: string
   compact?: boolean
+  onClick?: (event: React.MouseEvent<HTMLDivElement>, product: Product) => void
 }
 
-export function ProductCard({ product, className, compact = false }: ProductCardProps) {
+export function ProductCard({ product, className, onClick, compact = false }: ProductCardProps) {
   return (
     <Card
+      onClick={(event) => onClick?.(event, product)}
       className={cn(
         'group relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/10',
         'bg-gradient-to-br from-white via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-blue-950/30',
-        'border-2 shadow-md ring-1 ring-gray-200/50 dark:ring-gray-800/50 hover:ring-blue-300/50 dark:hover:ring-blue-700/50 cursor-pointer',
+        'border-2 shadow-md ring-1 ring-gray-200/50 dark:ring-gray-800/50 hover:ring-blue-300/50 dark:hover:ring-blue-700/50',
+        onClick && 'cursor-pointer',
+        compact && 'pt-3 pb-1',
         className
       )}>
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      <CardHeader className={cn('relative pb-2', compact && 'p-3')}>
+      <CardHeader className={cn('relative', compact && 'px-4')}>
         <div className="flex items-start gap-3">
           <div className="relative">
             <Avatar
@@ -65,7 +70,7 @@ export function ProductCard({ product, className, compact = false }: ProductCard
             {product.brand && (
               <div
                 className={cn(
-                  'inline-flex items-center gap-1 text-gray-600 dark:text-gray-400',
+                  'inline-flex ml-1 items-center gap-1 text-gray-600 dark:text-gray-400',
                   compact ? 'text-xs' : 'text-sm'
                 )}>
                 <span className="text-gray-400">by</span>
@@ -77,7 +82,7 @@ export function ProductCard({ product, className, compact = false }: ProductCard
       </CardHeader>
 
       {!compact && (
-        <CardContent className="relative pt-0 space-y-3">
+        <CardContent className="relative space-y-3">
           {product.category && (
             <Badge
               variant="secondary"
@@ -87,13 +92,9 @@ export function ProductCard({ product, className, compact = false }: ProductCard
           )}
 
           {product.description && (
-            <div className="relative">
-              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
-                {product.description}
-              </p>
-              {/* Fade out effect for long descriptions */}
-              <div className="absolute bottom-0 right-0 w-8 h-4 bg-gradient-to-l from-white dark:from-gray-900 to-transparent" />
-            </div>
+            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed">
+              {product.description}
+            </p>
           )}
         </CardContent>
       )}
