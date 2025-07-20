@@ -55,7 +55,7 @@ export function BulkDeleteDialog({ products, open, onOpenChange, onComplete }: B
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <ScrollingShadow className="h-96" shadowSize={24}>
+          <ScrollingShadow className="max-h-96" shadowSize={24}>
             <div className="space-y-3 px-1">
               {products.map((product) => (
                 <ProductCard
