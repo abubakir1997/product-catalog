@@ -21,13 +21,15 @@ import {
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
+  type OnChangeFn,
   type PaginationState,
+  type RowSelectionState,
   type SortDirection,
   type SortingState,
   type VisibilityState,
 } from '@tanstack/react-table'
 import { LoaderCircle, RefreshCcwIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 
 const DATA_TABLE_ROW_HEIGHT = 49
 
@@ -38,6 +40,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
 
   totalDataCount?: number
+  actions?: ReactNode
 
   loading?: boolean
   defaultSearchColumnId?: string
@@ -54,6 +57,9 @@ interface DataTableProps<TData, TValue> {
 
   className?: string
   onRefresh?: () => void
+
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: OnChangeFn<RowSelectionState>
 }
 
 export function DataTable<TData, TValue>({
@@ -63,6 +69,7 @@ export function DataTable<TData, TValue>({
   loading,
   defaultSearchColumnId,
   totalDataCount,
+  actions,
 
   query = '',
   onQueryChange,
@@ -74,6 +81,9 @@ export function DataTable<TData, TValue>({
 
   className,
   onRefresh,
+
+  rowSelection = {},
+  onRowSelectionChange,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -94,6 +104,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: onRowSelectionChange,
     onPaginationChange: (setStateAction) => {
       const nextPagination = getSetStateActionValue(setStateAction, pagination)
       onPageChange?.(nextPagination.pageIndex)
@@ -111,6 +122,7 @@ export function DataTable<TData, TValue>({
       columnFilters,
       columnVisibility,
       pagination,
+      rowSelection,
     },
   })
 
@@ -178,29 +190,30 @@ export function DataTable<TData, TValue>({
             <RefreshCcwIcon className={cn({ 'animate-spin': loading })} />
           </Button>
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {canHideColumns.map((column) => {
-              return (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onClick={(event) => {
-                    event.preventDefault()
-                    column.toggleVisibility()
-                  }}>
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              )
-            })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex flex-grow x-right space-x-2">
+          {actions}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Columns</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {canHideColumns.map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onClick={(event) => {
+                      event.preventDefault()
+                      column.toggleVisibility()
+                    }}>
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div
         className={`rounded-md border relative min-h-[${DATA_TABLE_ROW_HEIGHT * 10 + DATA_TABLE_HEADER_ROW_HEIGHT}px]`}>

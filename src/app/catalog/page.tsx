@@ -2,6 +2,7 @@ import { createProduct } from '@/api/createProduct'
 import { getProducts } from '@/api/getProducts'
 import { queryProducts } from '@/api/queryProducts'
 import { CatalogColumns } from '@/app/catalog/columns'
+import { BulkDeleteDialog } from '@/components/bulk-delete-dialog'
 import { CreateProductDialog } from '@/components/create-product-dialog'
 import { ImageGalleryDialog } from '@/components/image-gallery-dialog'
 import { ThemeDropdown } from '@/components/theme-dropdown'
@@ -11,7 +12,7 @@ import { useAuthStore } from '@/store/auth'
 import { useCatalogStore } from '@/store/catalog'
 import type { Product } from '@/types/Product'
 import type { ProductsResponse } from '@/types/ProductsResponse'
-import type { SortDirection } from '@tanstack/react-table'
+import type { RowSelectionState, SortDirection } from '@tanstack/react-table'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -26,6 +27,8 @@ export function CatalogPage() {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [galleryInitialIndex, setGalleryInitialIndex] = useState(0)
   const [isLoadingMoreForGallery, setIsLoadingMoreForGallery] = useState(false)
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false)
 
   const products = useCatalogStore((state) => state.products)
   const setProducts = useCatalogStore((state) => state.setProducts)
@@ -94,12 +97,26 @@ export function CatalogPage() {
 
   const hasMorePages = totalProductsCount ? products.length < totalProductsCount : false
 
+  const selectedProducts = Object.keys(rowSelection)
+    .map((index) => products[parseInt(index)])
+    .filter(Boolean)
+
+  const handleBulkDelete = () => {
+    if (selectedProducts.length > 0) {
+      setIsBulkDeleteDialogOpen(true)
+    }
+  }
+
+  const handleBulkDeleteComplete = () => {
+    setRowSelection({})
+    toast.success(`Successfully deleted ${selectedProducts.length} product${selectedProducts.length > 1 ? 's' : ''}`)
+  }
+
   return (
     <div className="flex flex-col space-y-4 p-6 md:p-10">
       <div className="flex">
         <h1 className="scroll-m-20  text-4xl font-extrabold tracking-tight text-balance">Product Catalog</h1>
         <div className="flex-auto flex x-right space-x-2">
-          <Button onClick={() => setIsCreateDialogOpen(true)}>Create Product</Button>
           <ThemeDropdown />
           <Button variant="outline" onClick={unauthenticate}>
             Log Out
@@ -117,12 +134,24 @@ export function CatalogPage() {
         onQueryChange={setQuery}
         page={page}
         onPageChange={setPage}
+        rowSelection={rowSelection}
+        onRowSelectionChange={setRowSelection}
         sortBy={sortBy}
         sortByDirection={sortByDirection}
         onSortChange={(sortBy, sortByDirection) => {
           setSortBy(sortBy)
           setSortByDirection(sortByDirection)
         }}
+        actions={
+          <>
+            {selectedProducts.length > 0 && (
+              <Button variant="destructive" onClick={handleBulkDelete}>
+                Delete {selectedProducts.length} Selected
+              </Button>
+            )}
+            <Button onClick={() => setIsCreateDialogOpen(true)}>Create Product</Button>
+          </>
+        }
       />
       <CreateProductDialog
         open={isCreateDialogOpen}
@@ -137,6 +166,12 @@ export function CatalogPage() {
         onLoadNextPage={handleLoadNextPage}
         hasMorePages={hasMorePages}
         isLoadingMore={isLoadingMoreForGallery}
+      />
+      <BulkDeleteDialog
+        products={selectedProducts}
+        open={isBulkDeleteDialogOpen}
+        onOpenChange={setIsBulkDeleteDialogOpen}
+        onComplete={handleBulkDeleteComplete}
       />
     </div>
   )
