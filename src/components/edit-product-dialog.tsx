@@ -16,7 +16,7 @@ import { useCatalogStore } from '@/store/catalog'
 import type { Product } from '@/types/Product'
 import { createProductSchema, type CreateProductFormData } from '@/validations/create-product'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface EditProductDialogProps {
@@ -59,6 +59,14 @@ export function EditProductDialog({ product, open, onOpenChange }: EditProductDi
       stopProductLoading(product._id)
     }
   }
+
+  useEffect(() => {
+    if (open) {
+      form.reset(product)
+    } else {
+      form.reset()
+    }
+  }, [form, open, product])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

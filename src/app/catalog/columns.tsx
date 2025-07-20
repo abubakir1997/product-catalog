@@ -1,11 +1,12 @@
 import { DeleteProductDialog } from '@/components/delete-product-dialog'
 import { EditProductDialog } from '@/components/edit-product-dialog'
+import { LoadingButton } from '@/components/loading-button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import type { ProductData } from '@/store/catalog'
 import type { ColumnDef } from '@tanstack/react-table'
-import { ArrowUpDown, Edit, Trash2 } from 'lucide-react'
+import { ArrowUpDown, Edit, Loader2, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 function ProductActions({ product }: { product: ProductData }) {
@@ -14,18 +15,25 @@ function ProductActions({ product }: { product: ProductData }) {
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="ghost" size="sm" onClick={() => setEditOpen(true)} className="h-8 w-8 p-0">
-        <Edit className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setDeleteOpen(true)}
-        className="h-8 w-8 p-0 text-destructive hover:text-destructive">
-        <Trash2 className="h-4 w-4" />
-      </Button>
-      <EditProductDialog product={product} open={editOpen} onOpenChange={setEditOpen} />
-      <DeleteProductDialog product={product} open={deleteOpen} onOpenChange={setDeleteOpen} />
+      {product.loading ? (
+        <LoadingButton variant="ghost" loading />
+      ) : (
+        <>
+          {' '}
+          <Button variant="ghost" size="sm" onClick={() => setEditOpen(true)} className="h-8 w-8 p-0">
+            <Edit className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setDeleteOpen(true)}
+            className="h-8 w-8 p-0 text-destructive hover:text-destructive">
+            <Trash2 className="size-4" />
+          </Button>
+          <EditProductDialog product={product} open={editOpen} onOpenChange={setEditOpen} />
+          <DeleteProductDialog product={product} open={deleteOpen} onOpenChange={setDeleteOpen} />
+        </>
+      )}
     </div>
   )
 }
@@ -50,11 +58,15 @@ export const CatalogColumns: ColumnDef<ProductData, ProductData>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
+        {row.original.loading ? (
+          <Loader2 className="animate-spin text-gray-500" />
+        ) : (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+          />
+        )}
       </div>
     ),
   },
