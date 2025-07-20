@@ -2,11 +2,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { ProductData } from '@/store/catalog'
 import type { Product } from '@/types/Product'
 
 interface ProductCardProps {
-  product: ProductData
+  product: Product
   className?: string
   compact?: boolean
   onClick?: (event: React.MouseEvent<HTMLDivElement>, product: Product) => void

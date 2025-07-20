@@ -1,5 +1,6 @@
 import { deleteProduct } from '@/api/deleteProduct'
 import { LoadingButton } from '@/components/loading-button'
+import { ProductCard } from '@/components/product-card'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -49,6 +50,7 @@ export function DeleteProductDialog({ product, open, onOpenChange }: DeleteProdu
           <DialogDescription>
             Are you sure you want to delete "{product.name}"? This action cannot be undone.
           </DialogDescription>
+          <ProductCard product={product} />
         </DialogHeader>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

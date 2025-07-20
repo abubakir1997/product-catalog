@@ -60,9 +60,8 @@ export function ScrollingShadow({ children, className, shadowSize = 20 }: Scroll
       {/* Scrollable content */}
       <div
         ref={scrollRef}
-        className="overflow-y-auto"
+        className="h-full overflow-y-auto"
         style={{
-          height: '100%',
           paddingTop: showTopShadow ? `${shadowSize / 2}px` : '0',
           paddingBottom: showBottomShadow ? `${shadowSize / 2}px` : '0',
         }}>
