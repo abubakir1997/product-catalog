@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import type { ProductData } from '@/store/catalog'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
+import { useKey } from 'react-use'
 
 interface ImageGalleryDialogProps {
   open: boolean
@@ -52,29 +53,9 @@ export function ImageGalleryDialog({
     }
   }, [isLastImage, hasMorePages, onLoadNextPage, isLoadingMore, currentIndex])
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!open) return
-
-      switch (event.key) {
-        case 'ArrowLeft':
-          event.preventDefault()
-          handlePrevious()
-          break
-        case 'ArrowRight':
-          event.preventDefault()
-          handleNext()
-          break
-        case 'Escape':
-          event.preventDefault()
-          onOpenChange(false)
-          break
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [open, handlePrevious, handleNext, onOpenChange])
+  useKey('ArrowLeft', handlePrevious, { event: 'keydown' }, [handlePrevious])
+  useKey('ArrowRight', handleNext, { event: 'keydown' }, [handleNext])
+  useKey('Escape', () => onOpenChange(false), { event: 'keydown' }, [open])
 
   if (!currentProduct) return null
 
