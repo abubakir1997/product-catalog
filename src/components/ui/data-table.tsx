@@ -1,5 +1,6 @@
 'use client'
 
+import { Pagination } from '@/components/pagination'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -131,11 +132,6 @@ export function DataTable<TData, TValue>({
   const canHideColumns = tableColumns.filter((column) => column.getCanHide())
   const [searchColumn, setSearchColumn] = useState<string | undefined>(defaultSearchColumnId ?? canFilterColumns[0]?.id)
 
-  const calculatedStartDataCount = page * PAGINATION_LIMIT + 1
-  const calculatedEndDataCount = page * PAGINATION_LIMIT + data.length
-  const isEndReached =
-    totalDataCount !== undefined ? calculatedEndDataCount >= totalDataCount : data.length % PAGINATION_LIMIT !== 0
-
   return (
     <div>
       <div className="flex y-center py-4 space-x-2">
@@ -257,31 +253,14 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex justify-between space-x-2 py-4">
-        <div className="text-gray-500">
-          Items {calculatedStartDataCount} - {calculatedEndDataCount}
-          {totalDataCount !== undefined ? ` from ${totalDataCount}` : ''}
-        </div>
-        <div className="flex space-x-2">
-          <Button variant="outline" size="sm" onClick={() => table.setPageIndex(0)} disabled={page === 0}>
-            {'<<'}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex((pageIndex) => Math.max(pageIndex - 1, 0))}
-            disabled={page === 0}>
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.setPageIndex((pageIndex) => pageIndex + 1)}
-            disabled={isEndReached}>
-            Next
-          </Button>
-        </div>
-      </div>
+      <Pagination
+        className="border-t-0"
+        page={page}
+        totalCount={totalDataCount}
+        itemCount={data.length}
+        onPageChange={onPageChange}
+        loading={loading}
+      />
     </div>
   )
 }

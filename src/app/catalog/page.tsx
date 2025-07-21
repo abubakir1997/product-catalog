@@ -4,8 +4,8 @@ import { queryProducts } from '@/api/queryProducts'
 import { CatalogColumns } from '@/app/catalog/columns'
 import { BulkDeleteDialog } from '@/components/bulk-delete-dialog'
 import { CreateProductDialog } from '@/components/create-product-dialog'
-import { GridPagination } from '@/components/grid-pagination'
 import { ImageGalleryDialog } from '@/components/image-gallery-dialog'
+import { Pagination } from '@/components/pagination'
 import { ProductGrid } from '@/components/product-grid'
 import { ThemeDropdown } from '@/components/theme-dropdown'
 import { Button } from '@/components/ui/button'
@@ -129,11 +129,14 @@ export function CatalogPage() {
         <h1 className="scroll-m-20  text-4xl font-extrabold tracking-tight text-balance">Product Catalog</h1>
         <div className="flex-auto flex x-right space-x-2">
           {/* View toggle buttons */}
-          <div className="flex y-center border rounded-lg bg-gray-50 dark:bg-gray-800 px-1">
-            <Button variant={viewMode === 'table' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('table')}>
+          <div className="flex mb-auto y-center border rounded-lg bg-gray-50 dark:bg-gray-800">
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'ghost'}
+              size="icon"
+              onClick={() => setViewMode('table')}>
               <Table2 className="size-4" />
             </Button>
-            <Button variant={viewMode === 'grid' ? 'default' : 'ghost'} size="sm" onClick={() => setViewMode('grid')}>
+            <Button variant={viewMode === 'grid' ? 'default' : 'ghost'} size="icon" onClick={() => setViewMode('grid')}>
               <Grid3X3 className="size-4" />
             </Button>
           </div>
@@ -154,7 +157,7 @@ export function CatalogPage() {
           query={query}
           onQueryChange={setQuery}
           page={page}
-          onPageChange={setPage}
+          onPageChange={handlePageChange}
           rowSelection={rowSelection}
           onRowSelectionChange={setRowSelection}
           sortBy={sortBy}
@@ -177,8 +180,8 @@ export function CatalogPage() {
       ) : (
         <div className="flex flex-col flex-1 space-y-4 min-h-0">
           {/* Grid view actions */}
-          <div className="flex items-center justify-between flex-shrink-0">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between flex-shrink-0 space-x-2">
+            <div className="flex flex-auto items-center space-x-2">
               <Input
                 placeholder="Search products..."
                 value={query}
@@ -209,7 +212,7 @@ export function CatalogPage() {
                 className="h-full"
               />
             </div>
-            <GridPagination
+            <Pagination
               page={page}
               totalCount={totalProductsCount}
               itemCount={products.length}
