@@ -21,6 +21,11 @@ import { Grid3X3, RefreshCcwIcon, Table2 } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
+function onError(err: any) {
+  const error = err as Error
+  toast.error(error.message)
+}
+
 export function CatalogPage() {
   const [isFetching, setFetching] = useState(false)
   const [query, setQuery] = useState('')
@@ -55,12 +60,12 @@ export function CatalogPage() {
 
       queryProducts(query, page)
         .then(setProducts)
-        .catch(toast.error)
+        .catch(onError)
         .finally(() => setFetching(false))
     } else {
       getProducts(sortBy, sortByDirection, page)
         .then(handleFetchProducts)
-        .catch(toast.error)
+        .catch(onError)
         .finally(() => setFetching(false))
     }
   }, [query, sortBy, sortByDirection, page, handleFetchProducts])
